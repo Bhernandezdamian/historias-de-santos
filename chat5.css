@@ -1,0 +1,187 @@
+/* Estilos para el cuerpo y elementos básicos */
+body, h1, h2, h3, p, input, button, textarea {
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-family: Arial, sans-serif;
+  }
+  
+  body {
+    background-color: #f4f4f4;
+  }
+  
+  /* Estilos para el contenedor principal */
+  .container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  /* Estilos para el formulario de publicación */
+  .post-form input[type="text"],
+  .post-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .post-form button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Estilos para las publicaciones */
+  .post {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+  }
+  
+  .post p {
+    margin-bottom: 10px;
+  }
+  
+  .post-image,
+  .post-video {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  
+  /* Estilos para las acciones de publicación */
+  .post-actions {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+  }
+  
+  .post-actions button {
+    margin-right: 10px;
+    color: #3498db;
+  }
+  
+  .likes {
+    font-weight: bold;
+  }
+  
+  /* Estilos para los comentarios */
+  .comments {
+    margin-top: 10px;
+    padding-left: 20px;
+  }
+  
+  .comments input[type="text"],
+  .reply-input {
+    width: 80%;
+    padding: 5px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .comments button,
+  .replySubmitButton {
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Estilo mejorado para los botones */
+  .button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    cursor: pointer;
+  }
+  
+  .button-primary {
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+  }
+  
+  .button-primary:hover {
+    background-color: #2980b9;
+  }
+  
+  .button-secondary {
+    background-color: #f4f4f4;
+    color: #333;
+    border: 1px solid #ccc;
+  }
+  
+  .button-secondary:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Estilos para el modal y la imagen ampliada */
+  .modal {
+    display: block;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+  }
+  
+  .modal-content {
+    display: block;
+    margin: auto;
+    max-width: 90%;
+    max-height: 80%;
+  }
+  
+  .close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 35px;
+    color: #f1f1f1;
+    cursor: pointer;
+  }
+  
+  /* Estilos adicionales para respuestas */
+  .comment-list li,
+  .reply-list li {
+    position: relative;
+    padding-left: 20px;
+  }
+  
+  .reply-list {
+    list-style-type: none;
+    padding-left: 20px;
+    margin-top: 10px;
+  }
+  
+  .reply-input,
+  .replySubmitButton {
+    display: none;
+  }
+  
+  .show {
+    display: block;
+  }
+  

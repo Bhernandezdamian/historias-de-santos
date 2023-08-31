@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.css">
+</head>
+<body>
+  <div id="chat">
+    <div id="messages"></div>
+    <input type="text" id="nameInput" placeholder="Tu nombre">
+    <input type="file" id="fileInput" accept="image/*, video/*">
+    <div id="emojiInput" class="emojionearea" placeholder="Escribe un mensaje..."></div>
+    <button id="sendMessage">Enviar</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/emojionearea/3.4.2/emojionearea.min.js"></script>
+  <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyDdonhqWQaJNipvXzxn9uEn_fs36XanMvI",
+        authDomain: "anecdotas-de-santos.firebaseapp.com",
+        projectId: "anecdotas-de-santos",
+        storageBucket: "anecdotas-de-santos.appspot.com",
+        messagingSenderId: "874391477483",
+        appId: "1:874391477483:web:7a84aad6d2149f33e0b2ae"
+      };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const messagesDiv = document.getElementById("messages");
+    const nameInput = document.getElementById("nameInput");
+    const fileInput = document.getElementById("fileInput");
+    const emojiInput = $("#emojiInput").emojioneArea();
+    const sendMessageButton = document.getElementById("sendMessage");
+
+    sendMessageButton.addEventListener("click", () => {
+      const name = nameInput.value;
+      const messageText = emojiInput.data("emojioneArea").getText();
+
+      if (name !== "" && (messageText !== "" || fileInput.files.length > 0)) {
+        if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          const storageRef = firebase.storage().ref();
+          const fileRef = storageRef.child(file.name);
+          fileRef.put(file).then(() => {
+            fileRef.getDownloadURL().then((url) => {
+              const fileMessage = {
+                type: file.type.startsWith("image") ? "image" : "video",
+                url: url,
+              };
+              sendMessage(JSON.stringify(fileMessage));
+            });
+          });
+        } else {
+          sendMessage(messageText);
+        }
+        emojiInput.data("emojioneArea").setText("");
+        fileInput.value = "";
+      }
+    });
+
+    function sendMessage(messageText) {
+      const name = nameInput.value;
+      if (name !== "" && messageText !== "") {
+        db.collection("messages").add({
+          name: name,
+          text: messageText,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        });
+      }
+    }
+
+    db.collection("messages")
+      .orderBy("timestamp")
+      .onSnapshot(snapshot => {
+        messagesDiv.innerHTML = "";
+        snapshot.forEach(doc => {
+          const message = doc.data();
+          const messageElement = document.createElement("div");
+          if (message.text.startsWith("{")) {
+            // If it's a file message
+            const fileMessage = JSON.parse(message.text);
+            if (fileMessage.type === "image") {
+              messageElement.innerHTML = `${message.name}: <img src="${fileMessage.url}" width="100" />`;
+            } else if (fileMessage.type === "video") {
+              messageElement.innerHTML = `${message.name}: <video src="${fileMessage.url}" width="200" controls></video>`;
+            }
+          } else {
+            // Regular text message
+            messageElement.textContent = `${message.name}: ${message.text}`;
+          }
+          messagesDiv.appendChild(messageElement);
+        });
+      });
+  </script>
+</body>
+</html>

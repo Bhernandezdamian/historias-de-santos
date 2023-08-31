@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitio Web Interactivo</title>
+    <!-- Agrega aquí tus enlaces a hojas de estilo CSS y enlaces a Firebase -->
+    <style>
+        /* ... Estilos CSS existentes ... */
+         /* Estilos para los comentarios */
+         .comments {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .comments li {
+            border: 1px solid #ccc;
+            margin: 10px;
+            padding: 10px;
+            position: relative;
+        }
+
+        /* Estilos para las respuestas */
+        .reply-button {
+            background-color: #f2f2f2;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .reply-form {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .reply-input {
+            width: 100%;
+            padding: 5px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        /* Indentación para diferenciar respuestas */
+        .reply {
+            margin-left: 20px;
+        }
+
+        /* Estilos para el modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .modal-content img,
+        .modal-content video {
+            width: 100%;
+            height: auto;
+        }
+
+        .close {
+            color: #fff;
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenido HTML existente -->
+    
+    <h2>Publicación</h2>
+    <div class="post">
+        <!-- ... Contenido de la publicación existente ... -->
+        <!-- Botón para abrir el modal de imagen -->
+        <button class="modal-trigger" data-src="imagen.jpg">Ver Imagen</button>
+        <!-- Reproductor de video para abrir el modal de video -->
+        <video src="video.mp4" controls class="modal-trigger" data-src="video.mp4"></video>
+    </div>
+
+    <!-- Modal para imágenes y videos -->
+    <div id="imageModal" class="modal">
+        <span class="close" id="closeModal">&times;</span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Imagen ampliada">
+            <video id="modalVideo" controls style="display: none;"></video>
+        </div>
+    </div>
+
+    <!-- ... Otro contenido HTML ... -->
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="firebase-config.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Referencias a elementos DOM
+            const likeButtons = document.querySelectorAll('.like-button');
+            const likes = document.querySelectorAll('.likes');
+            const commentSections = document.querySelectorAll('.comment-section');
+            const commentInputs = document.querySelectorAll('.comment-input');
+            const commentButtons = document.querySelectorAll('.comment-button');
+            const commentsLists = document.querySelectorAll('.comments');
+        
+            // Función para incrementar los "Me gusta"
+            function handleLikeClick(event) {
+                const postKey = event.target.dataset.key;
+                const postRef = firebase.database().ref('posts/' + postKey);
+        
+                postRef.transaction(function(post) {
+                    if (post) {
+                        if (!post.likes) {
+                            post.likes = 1;
+                        } else {
+                            post.likes++;
+                        }
+                    }
+                    return post;
+                });
+            }
+        
+            // Función para agregar un comentario
+            function handleCommentClick(event) {
+                const postKey = event.target.dataset.key;
+                const commentInput = event.target.previousElementSibling;
+                const commentText = commentInput.value.trim();
+        
+                if (commentText !== '') {
+                    const commentsRef = firebase.database().ref('comments/' + postKey);
+                    commentsRef.push(commentText);
+                    commentInput.value = '';
+                }
+            }
+        
+            // Función para agregar una respuesta
+            function handleReplyClick(event) {
+                const postKey = event.target.dataset.key;
+                const replyInput = event.target.previousElementSibling;
+                const replyText = replyInput.value.trim();
+        
+                if (replyText !== '') {
+                    const repliesRef = firebase.database().ref('replies/' + postKey);
+                    repliesRef.push(replyText);
+                    replyInput.value = '';
+                }
+            }
+        
+            // Agregar eventos a los botones "Me gusta" y comentarios
+            likeButtons.forEach(button => {
+                button.addEventListener('click', handleLikeClick);
+            });
+        
+            commentButtons.forEach(button => {
+                button.addEventListener('click', handleCommentClick);
+            });
+        
+            // Agregar eventos a los botones de respuestas
+            commentSections.forEach(section => {
+                const replyButton = section.querySelector('.reply-button');
+                if (replyButton) {
+                    replyButton.addEventListener('click', function() {
+                        const replyInput = section.querySelector('.reply-input');
+                        const replyForm = section.querySelector('.reply-form');
+                        replyInput.style.display = 'block';
+                        replyForm.style.display = 'block';
+                    });
+                }
+            });
+        
+            // Escuchar cambios en los "Me gusta" y comentarios
+            firebase.database().ref('posts').on('child_changed', function(snapshot) {
+                const postKey = snapshot.key;
+                const post = snapshot.val();
+                likes.forEach(like => {
+                    if (like.dataset.key === postKey) {
+                        like.textContent = post.likes + (post.likes === 1 ? ' Like' : ' Likes');
+                    }
+                });
+            });
+        
+            firebase.database().ref('comments').on('child_added', function(snapshot) {
+                const postKey = snapshot.key;
+                const commentList = commentsLists.find(list => list.dataset.key === postKey);
+                if (commentList) {
+                    const comment = snapshot.val();
+                    const li = document.createElement('li');
+                    li.textContent = comment;
+        
+                    // Botón para mostrar el formulario de respuesta
+                    const replyButton = document.createElement('button');
+                    replyButton.textContent = 'Responder';
+                    replyButton.className = 'reply-button';
+                    replyButton.dataset.key = postKey;
+        
+                    // Formulario de respuesta
+                    const replyForm = document.createElement('div');
+                    replyForm.className = 'reply-form';
+                    replyForm.style.display = 'none';
+        
+                    const replyInput = document.createElement('input');
+                    replyInput.type = 'text';
+                    replyInput.className = 'reply-input';
+                    replyInput.placeholder = 'Responder al comentario';
+        
+                    const replySendButton = document.createElement('button');
+                    replySendButton.textContent = 'Enviar';
+                    replySendButton.addEventListener('click', handleReplyClick);
+                    replySendButton.dataset.key = postKey;
+        
+                    replyForm.appendChild(replyInput);
+                    replyForm.appendChild(replySendButton);
+        
+                    li.appendChild(replyButton);
+                    li.appendChild(replyForm);
+        
+                    commentList.appendChild(li);
+                }
+            });
+        
+            firebase.database().ref('replies').on('child_added', function(snapshot) {
+                const postKey = snapshot.key;
+                const replyList = document.querySelector(`.comments[data-key="${postKey}"]`);
+                if (replyList) {
+                    const reply = snapshot.val();
+                    const li = document.createElement('li');
+                    li.textContent = reply;
+                    replyList.appendChild(li);
+                }
+            });
+        
+            // Función para abrir el modal
+            function openModal(source) {
+                modal.style.display = 'block';
+                if (source.endsWith('.mp4')) {
+                    modalImage.style.display = 'none';
+                    modalVideo.style.display = 'block';
+                    modalVideo.src = source;
+                } else {
+                    modalImage.style.display = 'block';
+                    modalVideo.style.display = 'none';
+                    modalImage.src = source;
+                }
+            }
+        
+            // Función para cerrar el modal
+            function closeModalFunction() {
+                modal.style.display = 'none';
+                modalImage.src = '';
+                modalVideo.src = '';
+            }
+        
+            // Agregar evento de clic a los elementos que activan el modal
+            modalTriggers.forEach(trigger => {
+                trigger.addEventListener('click', function() {
+                    openModal(trigger.dataset.src);
+                });
+            });
+        
+            // Agregar evento de clic para cerrar el modal
+            closeModal.addEventListener('click', closeModalFunction);
+        
+            // Cerrar el modal al hacer clic fuera de él
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeModalFunction();
+                }
+            });
+        
+            // Cerrar el modal al presionar la tecla Esc
+            window.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeModalFunction();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

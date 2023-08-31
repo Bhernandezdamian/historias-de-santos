@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Muro de Publicaciones</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+ /* Estilos para el cuerpo y elementos básicos */
+body, h1, h2, h3, p, input, button, textarea {
+  margin: 0;
+  padding: 0;
+  border: none;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  background-color: #f4f4f4;
+}
+
+/* Estilos para el contenedor principal */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+/* Estilos para el formulario de publicación */
+.post-form input[type="text"],
+.post-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.post-form button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #3498db;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Estilos para las publicaciones */
+.post {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+}
+
+.post p {
+  margin-bottom: 10px;
+}
+
+.post-image,
+.post-video {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Estilos para las acciones de publicación */
+.post-actions {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.post-actions button {
+  margin-right: 10px;
+  color: #3498db;
+}
+
+.likes {
+  font-weight: bold;
+}
+
+/* Estilos para los comentarios */
+.comments {
+  margin-top: 10px;
+  padding-left: 20px;
+}
+
+.comments input[type="text"],
+.reply-input {
+  width: 80%;
+  padding: 5px;
+  margin-right: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.comments button,
+.replySubmitButton {
+  background-color: #3498db;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Estilo mejorado para los botones */
+.button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.button-primary {
+  background-color: #3498db;
+  color: #ffffff;
+  border: none;
+}
+
+.button-primary:hover {
+  background-color: #2980b9;
+}
+
+.button-secondary {
+  background-color: #f4f4f4;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.button-secondary:hover {
+  background-color: #e0e0e0;
+}
+
+/* Estilos para el modal y la imagen ampliada */
+.modal {
+  display: block;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+  display: block;
+  margin: auto;
+  max-width: 90%;
+  max-height: 80%;
+}
+
+.close {
+  position: absolute;
+  top: 15px;
+  right: 25px;
+  font-size: 35px;
+  color: #f1f1f1;
+  cursor: pointer;
+}
+
+/* Estilos adicionales para respuestas */
+.comment-list li,
+.reply-list li {
+  position: relative;
+  padding-left: 20px;
+}
+
+.reply-list {
+  list-style-type: none;
+  padding-left: 20px;
+  margin-top: 10px;
+}
+
+.reply-input,
+.replySubmitButton {
+  display: none;
+}
+
+.show {
+  display: block;
+}
+
+
+  </style>
+</head>
+<body>
+    <div class="container">
+        <div class="post-form">
+          <input type="text" id="userName" placeholder="Tu nombre">
+          <textarea id="postText" placeholder="Escribe tu publicación..."></textarea>
+          <button id="imageButton" class="button button-secondary">Cargar Imagen</button>
+          <button id="videoButton" class="button button-secondary">Cargar Video</button>
+          <!-- Vista previa de la imagen -->
+          <div id="imagePreview" class="image-preview"></div>
+          <!-- Vista previa del video -->
+          <div id="videoPreview" class="video-preview"></div>
+          <button id="postButton" class="button button-primary">Publicar</button>
+        </div>
+        
+        
+        
+        <div id="posts"></div>
+      </div>
+      <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const postButton = document.getElementById("postButton");
+    const imageButton = document.getElementById("imageButton");
+    const videoButton = document.getElementById("videoButton");
+    const postsContainer = document.getElementById("posts");
+    const postTextArea = document.getElementById("postText");
+    const userNameInput = document.getElementById("userName");
+    let selectedImage = null;
+    let selectedVideo = null;
+
+    // Inicializar Firebase con tu configuración
+    const firebaseConfig = {
+      apiKey: "AIzaSyDdonhqWQaJNipvXzxn9uEn_fs36XanMvI",
+      authDomain: "anecdotas-de-santos.firebaseapp.com",
+      projectId: "anecdotas-de-santos",
+      storageBucket: "anecdotas-de-santos.appspot.com",
+      messagingSenderId: "874391477483",
+      appId: "1:874391477483:web:7a84aad6d2149f33e0b2ae"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    const realtimeDb = firebase.database();
+
+
+    // Función para obtener la duración de un video
+    async function getVideoDuration(videoFile) {
+      return new Promise((resolve, reject) => {
+        const video = document.createElement("video");
+        video.preload = "metadata";
+        video.src = URL.createObjectURL(videoFile);
+
+        video.onloadedmetadata = function () {
+          resolve(video.duration);
+          URL.revokeObjectURL(video.src);
+        };
+
+        video.onerror = function () {
+          reject(new Error("No se pudo obtener la duración del video."));
+        };
+      });
+    }
+
+    imageButton.addEventListener("click", function () {
+      if (postTextArea.value.trim() === "" || userNameInput.value.trim() === "") {
+        alert("Por favor, agrega tu nombre y un comentario antes de cargar una imagen.");
+        return;
+      }
+    
+      const imageInput = document.createElement("input");
+      imageInput.type = "file";
+      imageInput.accept = "image/*";
+      imageInput.style.display = "none";
+    
+      imageInput.addEventListener("change", function (event) {
+        selectedImage = event.target.files[0];
+    
+        const imagePreview = document.getElementById("imagePreview");
+        if (selectedImage) {
+          
+          const imageURL = URL.createObjectURL(selectedImage);
+          imagePreview.innerHTML = `<img src="${imageURL}" alt="Vista previa de la imagen">`;
+        } else {
+          imagePreview.innerHTML = "";
+        }
+      });
+    
+      document.body.appendChild(imageInput);
+      imageInput.click();
+      document.body.removeChild(imageInput);
+    });
+    
+
+    videoButton.addEventListener("click", function () {
+      if (postTextArea.value.trim() === "" || userNameInput.value.trim() === "") {
+        alert("Por favor, agrega tu nombre y un comentario antes de cargar un video.");
+        return;
+      }
+    
+      const videoInput = document.createElement("input");
+      videoInput.type = "file";
+      videoInput.accept = "video/*";
+      videoInput.style.display = "none";
+    
+      videoInput.addEventListener("change", async function (event) {
+        const selectedVideoFile = event.target.files[0];
+    
+        if (selectedVideoFile) {
+          
+          const videoDuration = await getVideoDuration(selectedVideoFile);
+          const maxDuration = 300; // 5 minutos en segundos
+    
+          if (videoDuration > maxDuration) {
+            alert("El video es demasiado largo. Por favor, elige un video de máximo 5 minutos.");
+            return;
+          }
+    
+          selectedVideo = selectedVideoFile;
+    
+          const videoPreview = document.getElementById("videoPreview");
+          const videoURL = URL.createObjectURL(selectedVideo);
+          videoPreview.innerHTML = `<video src="${videoURL}" controls class="post-video"></video>`;
+          
+        } else {
+          selectedVideo = null;
+          const videoPreview = document.getElementById("videoPreview");
+          videoPreview.innerHTML = "";
+        }
+      });
+    
+      document.body.appendChild(videoInput);
+      videoInput.click();
+      document.body.removeChild(videoInput);
+    });
+    
+
+    postButton.addEventListener("click", async function () {
+      postButton.textContent = "Publicando...";
+      const postText = postTextArea.value;
+      const userName = userNameInput.value.trim();
+    
+      if (postText !== "" && userName !== "") {
+        const postRef = db.collection("posts").doc(); // Crear una referencia a un nuevo documento
+        const postId = postRef.id;
+    
+        const postData = {
+          userName: userName,
+          postText: postText,
+          imageUrl: "",
+          videoUrl: "",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp() // Agrega la marca de tiempo actual
+        };
+    
+        if (selectedImage) {
+          const imageRef = storage.ref().child(`images/${postId}`);
+          await imageRef.put(selectedImage);
+          const imageUrl = await imageRef.getDownloadURL();
+          postData.imageUrl = imageUrl;
+          selectedImage = null;
+        }
+    
+        if (selectedVideo) {
+          const videoRef = storage.ref().child(`videos/${postId}`);
+          await videoRef.put(selectedVideo);
+          const videoUrl = await videoRef.getDownloadURL();
+          postData.videoUrl = videoUrl;
+          selectedVideo = null;
+          const videoPreview = document.getElementById("videoPreview");
+  videoPreview.innerHTML = ""; // Limpiar la vista previa del video
+
+  // Mostrar alerta al usuario
+  alert("¡Tu video ha sido publicado exitosamente!");
+  
+        }
+
+    
+        await postRef.set(postData);
+    
+        postTextArea.value = "";
+        const imagePreview = document.getElementById("imagePreview");
+        imagePreview.innerHTML = ""; // Limpiar la vista previa de la imagen
+        const videoPreview = document.getElementById("videoPreview");
+        videoPreview.innerHTML = ""; // Limpiar la vista previa del video
+    
+        // Crear elemento de publicación en la interfaz
+        createPostElement(postId, postData);
+      }
+    });
+    
+
+    // Mostrar las publicaciones al cargar la página
+    // Mostrar las publicaciones al cargar la página
+// Mostrar las publicaciones al cargar la página
+db.collection("posts").get().then((querySnapshot) => {
+  const posts = [];
+
+  querySnapshot.forEach((doc) => {
+    const postData = doc.data();
+    const postId = doc.id;
+    posts.push({ postId, postData }); // Agregar publicación al array
+  });
+
+  // Ordenar las publicaciones en función de la marca de tiempo (nuevas primero)
+  posts.sort((a, b) => a.postData.timestamp - b.postData.timestamp); // Change here
+
+  posts.forEach((post) => {
+    createPostElement(post.postId, post.postData); // Mostrar publicación ordenada
+  });
+}).catch((error) => {
+  console.error("Error obteniendo publicaciones: ", error);
+});
+
+function createCommentElement(commentData) {
+  console.log("Creating comment element:", commentData);
+
+  const commentItem = document.createElement("li");
+  commentItem.innerHTML = `<strong>${commentData.userName}:</strong> ${commentData.commentText}
+    <button class="replyButton">Responder</button>`;
+
+  const replyButton = commentItem.querySelector(".replyButton");
+  replyButton.addEventListener("click", function () {
+    const replyInput = document.createElement("input");
+    replyInput.type = "text";
+    replyInput.classList.add("reply-input");
+    
+    const replySubmitButton = document.createElement("button");
+    replySubmitButton.textContent = "Enviar";
+    replySubmitButton.classList.add("replySubmitButton");
+
+    replySubmitButton.addEventListener("click", function () {
+      if (replyInput.value !== "" && userName !== "") {
+        const commentId = commentData.commentId; // Get the comment's unique ID
+        const replyRef = realtimeDb.ref(`comments/${commentId}/replies`).push();
+        replyRef.set({
+          userName: userName,
+          replyText: replyInput.value,
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+        });
+        replyInput.value = "";
+      }
+    });
+
+    commentItem.appendChild(replyInput);
+    commentItem.appendChild(replySubmitButton);
+  });
+}
+
+    // ... (Resto del código)
+    function createPostElement(postId, postData) {
+      const postElement = document.createElement("div");
+      postElement.className = "post";
+      postElement.setAttribute("data-post-id", postId);
+    
+      let postContent = `<p><strong>${postData.userName}:</strong> ${postData.postText}</p>`;
+    
+      if (postData.imageUrl) {
+        postContent += `<img src="${postData.imageUrl}" alt="Publicación de ${postData.userName}" class="post-image">`;
+      }
+    
+      if (postData.videoUrl) {
+        postContent += `<video src="${postData.videoUrl}" controls class="post-video"></video>`;
+      }
+    
+      postContent += `
+        <div class="post-actions">
+          <button class="likeButton">Me gusta</button>
+          <div class="likes">0</div>
+        </div>
+        <div class="comments">
+          <ul class="comment-list"></ul>
+          <input type="text" class="comment-input" placeholder="Escribe un comentario">
+          <button class="commentButton">Comentar</button>
+        </div>`;
+    
+      postElement.innerHTML = postContent;
+    
+      const commentButton = postElement.querySelector(".commentButton");
+      commentButton.addEventListener("click", function () {
+        const commentInput = postElement.querySelector(".comment-input");
+        const commentText = commentInput.value;
+        
+        if (commentText !== "" && userName !== "") {
+          const postId = postElement.getAttribute("data-post-id");
+          const commentRef = realtimeDb.ref(`comments/${postId}`).push();
+          commentRef.set({
+            userName: userName,
+            commentText: commentText,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+          });
+          commentInput.value = "";
+        }
+      });
+      
+      
+      const commentList = postElement.querySelector(".comment-list");
+      const commentRef = realtimeDb.ref(`comments/${postId}`);
+      
+      commentRef.on("child_added", (snapshot) => {
+        const commentData = snapshot.val();
+        const postId = postElement.getAttribute("data-post-id"); // Get the postId
+        if (postId === commentData.postId) {
+          const commentItem = createCommentElement(commentData);
+          const commentList = postElement.querySelector(".comment-list"); // Get the correct comment-list
+          commentList.appendChild(commentItem);
+        }
+      });
+      
+      const likeButton = postElement.querySelector(".likeButton");
+      const likesCount = postElement.querySelector(".likes");
+    
+      let likes = 0;
+      let liked = false;
+      likeButton.addEventListener("click", function () {
+        if (!liked) {
+          likes++;
+          likesCount.textContent = likes;
+          liked = true;
+        }
+      });
+    
+      if (postsContainer.firstChild) {
+        postsContainer.insertBefore(postElement, postsContainer.firstChild);
+      } else {
+        postsContainer.appendChild(postElement);
+      }
+    }
+    
+    function createComment(postElement, commentText, userName) {
+      const commentList = postElement.querySelector(".comment-list");
+    
+      console.log("Creando comentario:", commentText);
+      
+      const commentItem = document.createElement("li");
+      commentItem.innerHTML = `<strong>${userName}:</strong> ${commentText}`;
+      commentList.appendChild(commentItem);
+      
+      console.log("Comentario creado y agregado a la lista:", commentText);
+    }
+    
+    
+    
+  });
+
+
+    
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Muro de Publicaciones</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Estilos CSS aquí */
+/* Estilos CSS aquí */
+body, h1, h2, h3, p, input, button, textarea {
+    margin: 0;
+    padding: 0;
+    border: none;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f4f4;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.post-form input[type="text"],
+.post-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.post-form button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.post {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.post p {
+    margin-bottom: 10px;
+}
+
+.post-image,
+.post-video {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.post-actions {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.post-actions button {
+    margin-right: 10px;
+    color: #3498db;
+}
+
+.likes {
+    font-weight: bold;
+}
+
+.comments {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.comments input[type="text"] {
+    width: 80%;
+    padding: 5px;
+    margin-right: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.comments button {
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Estilo mejorado para los botones */
+.button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+.button-primary {
+    background-color: #3498db;
+    color: #ffffff;
+    border: none;
+}
+
+.button-primary:hover {
+    background-color: #2980b9;
+}
+
+.button-secondary {
+    background-color: #f4f4f4;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.button-secondary:hover {
+    background-color: #e0e0e0;
+}
+
+/* Estilos para el modal y la imagen ampliada */
+.modal {
+    display: block;
+    position: fixed;
+    z-index: 9999;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.modal-content {
+    display: block;
+    margin: auto;
+    max-width: 90%;
+    max-height: 80%;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 35px;
+    color: #f1f1f1;
+    cursor: pointer;
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="post-form">
+      <input type="text" id="userName" placeholder="Tu nombre">
+      <textarea id="postText" placeholder="Escribe tu publicación..."></textarea>
+      <button id="imageButton" class="button button-secondary">Cargar Imagen</button>
+<button id="videoButton" class="button button-secondary">Cargar Video</button>
+<button id="postButton" class="button button-primary">Publicar</button>
+    </div>
+    <div id="posts"></div>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const postButton = document.getElementById("postButton");
+        const imageButton = document.getElementById("imageButton");
+        const videoButton = document.getElementById("videoButton");
+        const postsContainer = document.getElementById("posts");
+        const postTextArea = document.getElementById("postText");
+        const userNameInput = document.getElementById("userName");
+        let selectedImage = null;
+        let selectedVideo = null;
+    
+        imageButton.addEventListener("click", function () {
+            if (postTextArea.value.trim() === "" || userNameInput.value.trim() === "") {
+              alert("Por favor, agrega tu nombre y un comentario antes de cargar una imagen.");
+              return;
+            }
+          
+            const imageInput = document.createElement("input");
+            imageInput.type = "file";
+            imageInput.accept = "image/*";
+            imageInput.style.display = "none";
+            
+            imageInput.addEventListener("change", function (event) {
+              selectedImage = event.target.files[0];
+            });
+          
+            document.body.appendChild(imageInput);
+            imageInput.click();
+            document.body.removeChild(imageInput);
+          });
+          
+          videoButton.addEventListener("click", function () {
+            if (postTextArea.value.trim() === "" || userNameInput.value.trim() === "") {
+              alert("Por favor, agrega tu nombre y un comentario antes de cargar un video.");
+              return;
+            }
+          
+            const videoInput = document.createElement("input");
+            videoInput.type = "file";
+            videoInput.accept = "video/*";
+            videoInput.style.display = "none";
+          
+            videoInput.addEventListener("change", function (event) {
+              selectedVideo = event.target.files[0];
+            });
+          
+            document.body.appendChild(videoInput);
+            videoInput.click();
+            document.body.removeChild(videoInput);
+          });
+    
+        postButton.addEventListener("click", function () {
+          const postText = postTextArea.value;
+          const userName = userNameInput.value.trim();
+    
+          if (postText !== "" && userName !== "") {
+            const reader = new FileReader();
+    
+            reader.onload = function (event) {
+              createPost(userName, postText, selectedImage ? event.target.result : null, selectedVideo ? event.target.result : null);
+              selectedImage = null;
+              selectedVideo = null;
+            };
+    
+            if (selectedImage) {
+              reader.readAsDataURL(selectedImage);
+            } else if (selectedVideo) {
+              reader.readAsDataURL(selectedVideo);
+            } else {
+              createPost(userName, postText, null, null);
+            }
+    
+            postTextArea.value = "";
+          }
+        });
+    
+        function createPost(userName, text, imageData, videoData) {
+          const postElement = document.createElement("div");
+          postElement.className = "post";
+    
+          let postContent = `<p><strong>${userName}:</strong> ${text}</p>`;
+    
+          if (imageData) {
+            postContent += `<img src="${imageData}" alt="Publicación de ${userName}" class="post-image">`;
+          }
+    
+          if (videoData) {
+            postContent += `<video src="${videoData}" controls class="post-video"></video>`;
+          }
+    
+          postContent += `
+            <div class="post-actions">
+              <button class="likeButton">Me gusta</button>
+              <div class="likes">0</div>
+            </div>
+            <div class="comments">
+              <input type="text" placeholder="Escribe un comentario">
+              <button class="commentButton">Comentar</button>
+            </div>`;
+    
+          postElement.innerHTML = postContent;
+    
+          const commentButton = postElement.querySelector(".commentButton");
+          commentButton.addEventListener("click", function () {
+            const commentInput = postElement.querySelector("input");
+            const commentText = commentInput.value;
+            if (commentText.trim() !== "") {
+              createComment(postElement, commentText, userName);
+              commentInput.value = "";
+            }
+          });
+    
+          const likeButton = postElement.querySelector(".likeButton");
+          const likesCount = postElement.querySelector(".likes");
+    
+          let likes = 0;
+          let liked = false;
+          likeButton.addEventListener("click", function () {
+            if (!liked) {
+              likes++;
+              likesCount.textContent = likes;
+              liked = true;
+            }
+          });
+    
+          if (postsContainer.firstChild) {
+            postsContainer.insertBefore(postElement, postsContainer.firstChild);
+          } else {
+            postsContainer.appendChild(postElement);
+          }
+        }
+    
+        function createComment(postElement, commentText, userName) {
+          const commentsDiv = postElement.querySelector(".comments");
+          const commentElement = document.createElement("p");
+          commentElement.innerHTML = `<strong>${userName}:</strong> ${commentText}`;
+          
+          if (commentsDiv.firstChild) {
+            commentsDiv.insertBefore(commentElement, commentsDiv.firstChild);
+          } else {
+            commentsDiv.appendChild(commentElement);
+          }
+        }
+    
+      });
+  </script>
+</body>
+</html>
