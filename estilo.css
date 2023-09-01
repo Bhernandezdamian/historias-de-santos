@@ -59,3 +59,14 @@ button {
   cursor: pointer;
 }
 
+.inicio-button {
+  position: fixed;
+  top: 10px; /* Ajusta la posición vertical según tus preferencias */
+  right: 20px; /* Ajusta la posición horizontal según tus preferencias */
+  background-color: #333;
+  color: white;
+  padding: 10px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
