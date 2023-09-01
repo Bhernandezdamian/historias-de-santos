@@ -34,3 +34,10 @@ nextBtn.addEventListener('click', () => {
 });
 
 showPage(currentPageIndex);
+
+// Detecta el evento de retroceso en la navegación del historial
+window.addEventListener('popstate', function (event) {
+  // Redirige al usuario a "index.html" cuando retroceden
+  window.location.href = 'index.html';
+});
+
