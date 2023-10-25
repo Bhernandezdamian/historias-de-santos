@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santísimo en Vivo</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        
+        #video-container {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+        
+        #oracion-text {
+            font-size: 16px;
+            line-height: 1.5;
+            text-align: center;
+            color: #333;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            padding: 20px;
+        }
+        
+        #oracion-text p {
+            margin: 0;
+            padding: 0;
+            font-weight: bold;
+        }
+        
+        #cita-button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        #cita-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+        
+        #cita-box {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #000;
+            color: #fff;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        #cita-close-button {
+            background-color: #fff;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="video-container">
+        <iframe width="100%" height="200" src="https://www.youtube.com/embed/EtCXM9RlXG8?si=_vHSYI0dwz1PK5Uu&autoplay=1" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <div id="oracion-text">
+        <p>Por favor, tómate un momento para hacer una oración y reflexionar. Cuando estés listo, toca el botón para recibir un mensaje de Dios solo para ti.</p>
+        <p>Comencemos, En el nombre del Padre, del Hijo y del Espíritu Santo. Amén.</p>
+        <p>Padre nuestro que estás en el cielo...</p>
+        <p>Ven, Espíritu Santo, llena los corazones de tus fieles y enciende en ellos el fuego de tu amor. Envía, Señor, tu Espíritu, y todo será creado, y se renovará la faz de la tierra.</p>
+        <p>Dios te salve, María, llena eres de gracia, el Señor es contigo. Bendita tú eres entre todas las mujeres, y bendito es el fruto de tu vientre, Jesús. Santa María, Madre de Dios, ruega por nosotros pecadores, ahora y en la hora de nuestra muerte. Amén.</p>
+        <button id="cita-button">Obtener Cita Bíblica</button>
+    </div>
+    <div id="cita-overlay">
+        <div id="cita-box">
+            <p id="cita-content"></p>
+            <button id="cita-close-button">Cerrar</button>
+        </div>
+    </div>
+    <script>
+        // Array de citas bíblicas
+        const citasBiblicas = [
+            "Filipenses 4:13 (Biblia Latinoamericana): Todo lo puedo en Aquel que me conforta",
+            "Isaías 41:10 (Biblia Latinoamericana): No temas, porque yo estoy contigo; no desfallezcas, porque yo soy tu Dios. Yo te fortaleceré, ciertamente te ayudaré, sí, te sostendré con la diestra de mi justicia.",
+            "Romanos 8:28 (Biblia Latinoamericana): Y sabemos que en todas las cosas interviene Dios para bien de los que le aman, de aquellos que han sido llamados según su designio.",
+            "Salmos 34:18 (Biblia Latinoamericana): El Señor está cerca de los que tienen el corazón quebrantado, y salva a los de espíritu abatido.",
+            "Mateo 11:28 (Biblia Latinoamericana): Vengan a mí todos los que están cansados y agobiados, y yo los aliviaré.",
+            "2 Corintios 4:16-18 (Biblia Latinoamericana): Por tanto, no desfallecemos, antes bien, aunque nuestro hombre exterior va decayendo, nuestro hombre interior se renueva de día en día. Pues esta breve tribulación momentánea produce en nosotros un sobreabundante y eterno peso de gloria.",
+            "Salmos 55:22 (Biblia Latinoamericana): Encomienda tus afanes al Señor, y él te sostendrá; nunca permitirá que el justo caiga.",
+            "Juan 16:33 (Biblia Latinoamericana): Les he dicho esto para que tengan paz en mí. En este mundo afrontarán aflicciones, pero ¡ánimo!, yo he vencido al mundo.",
+            "Isaías 40:31 (Biblia Latinoamericana): Pero los que esperan en el Señor renuevan sus fuerzas; vuelan como las águilas; corren y no se cansan; caminan y no se fatigan.",
+            "Salmos 46:1 (Biblia Latinoamericana): Dios es nuestro refugio y nuestra fuerza, una ayuda siempre pronta en los peligros.",
+            "Isaías 43:2 (Biblia Latinoamericana): Cuando pases por las aguas, yo estaré contigo; y si por los ríos, no te anegarán. Cuando camines por el fuego, no te quemarás, ni la llama te abrasará.",
+            "Salmo 30:5 (Biblia Latinoamericana): Porque su cólera es pasajera, pero su bondad es eterna. Por la noche durará el llanto, y a la mañana vendrá la alegría.",
+            "Mateo 6:34 (Biblia Latinoamericana): No se preocupen por el día de mañana, porque el día de mañana traerá sus propias preocupaciones. A cada día le basta su propio mal.",
+            "Jeremías 29:11 (Biblia Latinoamericana): Porque yo sé los planes que tengo para ustedes, oráculo del Señor, planes de prosperidad y no de desgracia, para darles un porvenir y una esperanza.",
+            "Salmos 23:4 (Biblia Latinoamericana): Aunque camine por un valle tenebroso, ningún mal temeré, porque tú estás conmigo; tu vara y tu cayado me infunden confianza.",
+            "Salmos 27:1 (Biblia Latinoamericana): El Señor es mi luz y mi salvación, ¿a quién temeré? El Señor es la defensa de mi vida, ¿quién me hará temblar?",
+            "Isaías 41:13 (Biblia Latinoamericana): Porque yo soy el Señor, tu Dios, quien te sostiene de tu mano derecha y te dice: No temas, yo te auxilio.",
+            "Romanos 15:13 (Biblia Latinoamericana): Que el Dios de la esperanza los llene de toda alegría y paz en su fe, para que abunden en esperanza por el poder del Espíritu Santo.",
+            "Salmos 121:1-2 (Biblia Latinoamericana): Levanto mis ojos a los montes; ¿de dónde me vendrá el socorro? Mi socorro viene del Señor, que hizo el cielo y la tierra.",
+            "2 Timoteo 1:7 (Biblia Latinoamericana): Porque no nos ha dado Dios espíritu de cobardía, sino de fortaleza, de amor y de templanza.",
+            "Salmos 55:22 (Biblia Latinoamericana): Encomienda tus afanes al Señor, y él te sostendrá; nunca permitirá que el justo caiga.",
+            "Mateo 6:27 (Biblia Latinoamericana): ¿Quién de ustedes, por mucho que se afane, puede añadir un solo codo a la medida de su vida?",
+            "Salmos 62:5-8 (Biblia Latinoamericana): Descansa solo en Dios, alma mía, porque de él viene mi esperanza. Solo él es mi roca y mi salvación. Es mi fortaleza; nunca vacilaré. En Dios está mi salvación y mi gloria; él es mi roca poderosa y mi refugio.",
+            "Mateo 11:28-30 (Biblia Latinoamericana): Vengan a mí todos los que están fatigados y sobrecargados, y yo les daré descanso. Carguen con mi yugo y aprendan de mí, que soy manso y humilde de corazón, y hallarán descanso. Porque mi yugo es suave y mi carga liviana.",
+            "Hebreos 13:5-6 (Biblia Latinoamericana): Que su conducta no sea inspirada por el afán de dinero; estén contentos con lo que tienen, pues Dios ha dicho: No te abandonaré ni te dejaré. Así que podemos decir con confianza: El Señor es mi ayudante, no temeré.",
+            "Proverbios 3:5-6 (Biblia Latinoamericana): Confía en el Señor con todo tu corazón, y no te apoyes en tu propia prudencia. Reconócelo en todos tus caminos, y él enderezará tus sendas.",
+            "Salmo 34:4 (Biblia Latinoamericana): Busqué al Señor, y él me respondió, me libró de todos mis temores.",
+            "Isaías 40:29 (Biblia Latinoamericana): Él da fuerzas al fatigado y acrecienta las fuerzas del débil.",
+            "Salmos 139:9-10 (Biblia Latinoamericana): Si tomara las alas de la aurora y fuera a habitar en los confines del mar, aun allí me guiaría tu mano y me sostendría tu diestra.",
+            "Romanos 8:38-39 (Biblia Latinoamericana): Estoy seguro de que ni la muerte, ni la vida, ni los ángeles, ni los principados, ni el presente, ni el futuro, ni las potestades, ni la altura, ni la profundidad, ni ninguna otra criatura nos podrá separar del amor de Dios manifestado en Cristo Jesús, nuestro Señor.",
+            "Isaías 54:10 (Biblia Latinoamericana): Aunque los montes cambien de lugar y las colinas se tambaleen, mi amor por ti no cambiará, ni tambaleará mi alianza de paz, dice el Señor, que tiene compasión de ti.",
+            "Salmos 30:11-12 (Biblia Latinoamericana): Tú cambiaste mi lamento en danza; me desataste el saco de luto y me ceñiste de alegría, para que te cante y no me calle. Señor, Dios mío, ¡te alabaré por siempre!",
+            "Mateo 6:33 (Biblia Latinoamericana): Busquen primero el reino de Dios y su justicia, y todo lo demás se les dará por añadidura.",
+            "Hebreos 12:11 (Biblia Latinoamericana): Ninguna disciplina parece agradable en el momento, sino más bien dolorosa; sin embargo, después produce una cosecha de justicia y paz para aquellos que han sido ejercitados por ella.",
+            "1 Pedro 5:7 (Biblia Latinoamericana): Descarguen en él todas sus angustias, pues él cuida de ustedes.",
+            "Salmos 27:14 (Biblia Latinoamericana): Espera en el Señor; sé fuerte, y aliéntese tu corazón. Sí, espera en el Señor.",
+            "2 Corintios 1:3-4 (Biblia Latinoamericana): Bendito sea el Dios y Padre de nuestro Señor Jesucristo, Padre de misericordias y Dios de toda consolación, el cual nos consuela en todas nuestras tribulaciones, para que podamos también consolar a los que están en cualquier tribulación, por medio de la consolación con que nosotros somos consolados por Dios.",
+            "Salmos 46:1-2 (Biblia Latinoamericana): Dios es nuestro amparo y nuestra fortaleza, nuestro pronto auxilio en las tribulaciones. Por tanto, no temeremos, aunque la tierra sea removida, y se traspasen los montes al corazón del mar.",
+            "Romanos 12:12 (Biblia Latinoamericana): Alégrense en la esperanza, sean pacientes en el sufrimiento y perseveren en la oración.",
+            "Mateo 19:26 (Biblia Latinoamericana): Para los hombres esto es imposible, pero para Dios todo es posible.",
+            "Jeremías 32:17 (Biblia Latinoamericana): ¡Ah, Señor Dios! He aquí que tú hiciste los cielos y la tierra con tu gran poder y con tu brazo extendido; ninguna cosa es difícil para ti.",
+            "Mateo 7:7-8 (Biblia Latinoamericana): Pidan y se les dará; busquen y encontrarán; llamen y se les abrirá. Porque todo el que pide, recibe; el que busca, encuentra; y al que llama, se le abre.",
+            "Salmos 37:4 (Biblia Latinoamericana): Deléitate en el Señor, y él te concederá las peticiones de tu corazón.",
+            "Salmos 34:17-18 (Biblia Latinoamericana): Claman los justos, y el Señor los oye y los libra de todas sus angustias. Cercano está el Señor a los atribulados, y salva a los quebrantados de espíritu.",
+            "Isaías 41:10 (Biblia Latinoamericana): No temas, porque yo estoy contigo; no desfallezcas, porque yo soy tu Dios. Yo te fortaleceré, ciertamente te ayudaré, sí, te sostendré con la diestra de mi justicia.",
+            "Romanos 15:13 (Biblia Latinoamericana): Que el Dios de la esperanza los llene de toda alegría y paz en su fe, para que abunden en esperanza por el poder del Espíritu Santo.",
+            "Salmos 119:105 (Biblia Latinoamericana): Lámpara es a mis pies tu palabra y luz a mi camino.",
+            "Salmos 42:11 (Biblia Latinoamericana): ¿Por qué te abates, alma mía, y por qué te inquietas dentro de mí? Espera en Dios, pues aún he de alabarlo, ¡mi salvación y mi Dios!",
+            "Isaías 43:1 (Biblia Latinoamericana): Ahora, así dice el Señor, el que te creó, Jacob, el que te formó, Israel: No temas, que yo te redimí, te llamé por tu nombre, tú eres mío.",
+            "2 Corintios 4:17-18 (Biblia Latinoamericana): Porque esta tribulación leve y pasajera nos prepara un peso eterno de gloria inconmensurable. No ponemos los ojos en lo que se ve, sino en lo que no se ve; porque lo que se ve es pasajero, pero lo que no se ve es eterno.",
+            "Salmos 46:7 (Biblia Latinoamericana): El Señor de los ejércitos está con nosotros, nuestro refugio es el Dios de Jacob.",
+            "Filipenses 4:6-7 (Biblia Latinoamericana): No se inquieten por nada; más bien, en toda ocasión, con oración y ruego, presenten sus peticiones a Dios y denle gracias. Y la paz de Dios, que sobrepasa todo entendimiento, guardará sus corazones y sus pensamientos en Cristo Jesús.",
+            "Salmo 23:1 (Biblia Latinoamericana): El Señor es mi pastor, nada me falta.",
+            "Salmos 91:1-2 (Biblia Latinoamericana): El que habita al abrigo del Altísimo morará a la sombra del Todopoderoso. Diré yo al Señor: Refugio mío y fortaleza mía, mi Dios, en quien confiaré.",
+            "Romanos 8:31 (Biblia Latinoamericana): ¿Qué, pues, diremos a esto? Si Dios está por nosotros, ¿quién contra nosotros?",
+            "Salmos 37:5 (Biblia Latinoamericana): Encomienda al Señor tus caminos, confía en él, y él actuará.",
+            "Isaías 26:3 (Biblia Latinoamericana): Tú guardarás en completa paz a aquel cuyo pensamiento en ti persevera, porque en ti ha confiado.",
+            "Salmos 55:22 (Biblia Latinoamericana): Encomienda tus afanes al Señor, y él te sostendrá; nunca permitirá que el justo caiga.",
+            //"Filipenses",
+
+
+                        // Agrega más citas bíblicas aquí
+        ];
+
+        const citaOverlay = document.getElementById("cita-overlay");
+        const citaContent = document.getElementById("cita-content");
+        const citaCloseButton = document.getElementById("cita-close-button");
+        const citaButton = document.getElementById("cita-button");
+
+        citaButton.addEventListener("click", () => {
+            const citaAleatoria = obtenerCitaAleatoria();
+            if (citaAleatoria) {
+                citaContent.textContent = citaAleatoria;
+                citaOverlay.style.animation = "fade-in 0.5s";
+                citaOverlay.style.display = "block";
+            }
+        });
+        
+        citaCloseButton.addEventListener("click", () => {
+            citaOverlay.style.animation = "fade-out 0.5s";
+            setTimeout(() => {
+                citaOverlay.style.display = "none";
+            }, 500);
+        });
+        
+        function obtenerCitaAleatoria() {
+            if (citasBiblicas.length === 0) {
+                return "No hay citas disponibles en este momento.";
+            }
+            
+            const citaIndex = Math.floor(Math.random() * citasBiblicas.length);
+            const citaAleatoria = citasBiblicas.splice(citaIndex, 1)[0];
+            return citaAleatoria;
+        }
+        
+
+        citaCloseButton.addEventListener("click", () => {
+            citaOverlay.style.display = "none";
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #007bff, #ffffff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+  
+    #chat-box {
+      background: linear-gradient(to bottom, #007bff, #ffffff);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+  
+    input[type="text"],
+    input[type="file"],
+    button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+  
+    input[type="file"] {
+      border: none;
+      background-color: transparent;
+    }
+  
+    button {
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+  
+    button:hover {
+      background-color: #0056b3;
+    }
+  
+    #messages-container {
+      margin-top: 10px;
+    }
+  
+    #messages {
+      overflow-y: scroll;
+      max-height: 300px; /* Limit the height to make the chat scrollable */
+    }
+  
+    img {
+      max-width: 100%;
+      max-height: 200vh; /* Establece un tamaño máximo de altura para las imágenes */
+      height: auto;
+    }
+  
+    p {
+      margin: 10px 0;
+    }
+  </style>
+  
+</head>
+<body>
+  <div id="chat-box">
+    <div id="messages-container">
+      <div id="messages"></div>
+    </div>
+    <input type="text" id="name" placeholder="Tu nombre">
+    <input type="text" id="message" placeholder="Escribe tu mensaje...">
+    <input type="file" id="image" accept="image/*">
+    <button id="send">Enviar</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDdonhqWQaJNipvXzxn9uEn_fs36XanMvI",
+      authDomain: "anecdotas-de-santos.firebaseapp.com",
+      databaseURL: "https://anecdotas-de-santos-default-rtdb.firebaseio.com",
+      projectId: "anecdotas-de-santos",
+      storageBucket: "anecdotas-de-santos.appspot.com",
+      messagingSenderId: "874391477483",
+      appId: "1:874391477483:web:7a84aad6d2149f33e0b2ae"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+
+    const database = firebase.database();
+    const messagesRef = database.ref("messages");
+    const storage = firebase.storage();
+
+    const messageHistory = [];
+
+    const messagesDiv = document.getElementById("messages");
+    const nameInput = document.getElementById("name");
+    const messageInput = document.getElementById("message");
+    const imageInput = document.getElementById("image");
+    const sendButton = document.getElementById("send");
+
+    const getCookie = (name) => {
+      const value = "; " + document.cookie;
+      const parts = value.split("; " + name + "=");
+      if (parts.length === 2) return parts.pop().split(";").shift();
+    };
+
+    const storedName = getCookie('userName');
+    if (storedName) {
+      nameInput.value = storedName;
+    }
+
+    sendButton.addEventListener("click", () => {
+      const name = nameInput.value;
+      const messageText = messageInput.value;
+
+      if (name.trim() !== "" && (messageText.trim() !== "" || imageInput.files.length > 0)) {
+        document.cookie = `userName=${name}; expires=${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toUTCString()}`;
+
+        if (imageInput.files.length > 0) {
+          const file = imageInput.files[0];
+          const storageRef = storage.ref();
+          const imagesRef = storageRef.child(`images/${file.name}`);
+          imagesRef.put(file).then((snapshot) => {
+            snapshot.ref.getDownloadURL().then((downloadURL) => {
+              const message = {
+                name: name,
+                text: messageText,
+                imageURL: downloadURL,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+              };
+              messagesRef.push(message);
+              nameInput.value = "";
+              messageInput.value = "";
+              imageInput.value = "";
+            });
+          });
+        } else {
+          const message = {
+            name: name,
+            text: messageText,
+            timestamp: firebase.database.ServerValue.TIMESTAMP
+          };
+          messagesRef.push(message);
+          nameInput.value = "";
+          messageInput.value = "";
+
+          location.reload();
+        }
+      }
+    });
+
+    const formatDate = (timestamp) => {
+      const date = new Date(timestamp);
+      return date.toLocaleDateString('es-ES');
+    };
+
+    let lastDisplayedDate = null;
+
+    messagesRef.on("child_added", (snapshot) => {
+      const message = snapshot.val();
+      messageHistory.push(message);
+    
+      messagesDiv.innerHTML = '';
+    
+      // Invierte el orden de los mensajes para mostrar el último primero
+      for (let i = messageHistory.length - 1; i >= 0; i--) {
+        const msg = messageHistory[i];
+        const messageElement = document.createElement("div");
+        const messageContent = document.createElement("p");
+        messageContent.innerHTML = `<span style="color: red;">${msg.name}:</span> ${msg.text}`; // Aplica el color rojo al nombre
+    
+        // Aplica estilos CSS al texto del mensaje
+        messageContent.style.color = "white"; // Texto blanco
+        messageContent.style.fontWeight = "bold"; // Texto en negritas
+    
+        if (msg.imageURL) {
+          const imageElement = document.createElement("img");
+          imageElement.src = msg.imageURL;
+          imageElement.alt = "Image";
+          imageElement.width = 200;
+          messageContent.appendChild(imageElement);
+        }
+    
+        messageElement.appendChild(messageContent);
+        messagesDiv.appendChild(messageElement);
+      }
+    });
+  </script>
+</body>
+</html>

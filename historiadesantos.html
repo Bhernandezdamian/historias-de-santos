@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Botones Espirituales</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #3869ca, #16018a);
+            margin: 0;
+            padding: 0;
+        }
+        
+        h1 {
+            font-size: 32px;
+            color: #f9faf7;
+            margin: 40px 0;
+            text-align: center;
+        }
+        
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .puzzle-piece {
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #6b8e23;
+            border-radius: 20px;
+            background-color: #f9faf7;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .puzzle-piece img {
+            max-width: 80%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .puzzle-piece p {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .puzzle-piece:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .button-link {
+            text-decoration: none;
+            color: #6b8e23;
+            transition: color 0.2s ease;
+        }
+        
+        .button-link:hover {
+            color: #4e6d17;
+        }
+        
+    </style>
+</head>
+<body>
+    <h1>Fe en Palabras: Inspiradoras Vidas de Santos</h1>
+    <div class="puzzle-container">
+        <div class="puzzle-piece">
+            <a class="button-link" href="San Francisco de Asís.html">
+                <img src="imagen1.jpg" alt="Imagen 1">
+            </a>
+            <p>San Francisco de Asís</p>
+        </div>
+        <div class="puzzle-piece">
+            <a class="button-link" href="san agustin.html">
+                <img src="san agustin.jpeg" alt="Imagen 1">
+            </a>
+            <p>san Agustin de Hipona</p>
+        </div>
+        <div class="puzzle-piece">
+            <a class="button-link" href="San Juan Vianney.html">
+                <img src="San Juan Vianney.jpeg" alt="Imagen 1">
+            </a>
+            <p>San Juan Vianney</p>
+        </div>
+        <div class="puzzle-piece">
+            <a class="button-link" href="San Maximiliano Kolbe.html">
+                <img src="san Maximiliano Kolbe.jpeg" alt="Imagen 1">
+            </a>
+            <p>San Maximiliano Kolbe</p>
+        </div>
+        <div class="puzzle-piece">
+            <a class="button-link" href="Santa Clara de Asís.html">
+                <img src="Santa Clara de Asís.jpeg" alt="Imagen 1">
+            </a>
+            <p>Santa Clara de Asís</p>
+        </div>
+        <div class="puzzle-piece">
+            <a class="button-link" href="Santa Gema Galgani.html">
+                <img src="Santa Gema Galgani.jpeg" alt="Imagen 1">
+            </a>
+            <p>Santa Gema Galgani</p>
+        </div>
+        <!-- Repite el mismo patrón para las otras imágenes -->
+    </div>
+</body>
+</html>

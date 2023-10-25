@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUSICA CATOLICA</title>
+    <style>
+        body {
+            background-color: black;
+          }
+
+      /* Estilos para el reproductor de video */
+      #player {
+        width: 320px;
+        height: 180px;
+        background-color: black;
+        margin: 0 auto; /* Nueva propiedad para centrar */
+        margin-left: 25px;
+      }
+      
+      /* Estilos para la lista de botones */
+      #buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 20px;
+        flex-direction: column;
+      }
+      
+      button {
+        margin: 0px;
+        padding: 10px;
+        background-color: black;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        color: rgb(250, 252, 252);
+      }
+      
+      button.active {
+        background-color: rgb(233, 163, 11);
+      }
+      
+      /* Estilos para el buscador */
+      header {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        background-color: #333;
+        color: rgb(240, 246, 247);
+        padding: 10px;
+      }
+      
+      input[type=text] {
+        padding: 10px;
+        font-size: 16px;
+        border: none;
+        border-radius: 5px;
+        margin-right: 10px;
+      }
+      
+      button[type=submit] {
+        padding: 10px;
+        background-color: rgb(241, 245, 15);
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+      }
+      h4 {
+        color: white;
+    }
+
+    #facebook-button {
+      margin: 10px;
+      text-align: center;
+    }
+    
+    #facebook-button a {
+      display: inline-block;
+      padding: 10px;
+      background-color: rgb(59, 89, 152);
+      color: white;
+      border-radius: 5px;
+      font-size: 16px;
+      text-decoration: none;
+    }
+    
+    #facebook-button a:hover {
+      background-color: rgb(89, 119, 182);
+    }
+    
+    .boton {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #429ed3;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      box-shadow: 2px 2px 5px #888888;
+      margin:  0 auto;
+    }
+
+    .boton1 {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      box-shadow: 2px 2px 5px #888888;
+      margin:  0 auto;
+    }
+
+    .boton2 {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #ddb328;
+      color: white;
+      font-size: 16px;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      box-shadow: 2px 2px 5px #888888;
+      margin:  0 auto;
+    }
+    
+
+
+
+    </style>
+
+</head>
+<body>
+  <h4>Todos los días nuevas novedades</h4>
+    <header>
+        <div id="search">
+          <input type="text" id="search-input" placeholder="Buscar video...">
+          <button type="submit" id="search-button">Buscar</button>
+        </div>
+      </header>
+
+     
+
+
+      <div id="player"></div>
+      <div id="buttons"></div>
+      
+      <script src="https://www.youtube.com/iframe_api"></script>
+      <script src="musica.js"></script>
+      
+
+  
+
+
+
+
+    
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

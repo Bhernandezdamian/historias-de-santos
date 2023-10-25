@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Santo Rosario de Hoy</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #f5f5f5, #1a17be);
+            margin: 0;
+        }
+
+        h1 {
+            background-color: #17c58b;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #misas {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            display: none;
+        }
+
+        iframe {
+            margin: 20px 0;
+            max-width: 100%;
+        }
+
+        #santo-container {
+            display: block;
+            background-color: #fff;
+            padding: 20px;
+        }
+
+        #santo-loading {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Santo Rosario</h1>
+    <div id="misas">
+        <!-- Aquí se cargarán los videos de YouTube -->
+    </div>
+    <div id="santo-container">
+        <img src="https://sjb.marialuzdivina.com/wp-content/uploads/2019/06/ostens%C3%B3rio.gif" alt="Santo del día" width="300" height="300">
+
+        <p id="santo-loading">Cargando...</p>
+    </div>
+
+    <script>
+        // Video de YouTube
+        const firstVideoID = "xnLF78MrkDM"; // Reemplaza con el ID de tu primer video
+        const secondVideoID = "7Jx5m8qxa0E"; // ID del segundo video
+        const thirdVideoID = "4bl5ALWuDfw"; // ID del tercer video
+        const cuatroVideoID = "fg2Ur_Dp6Ww";
+
+        // Función para mostrar un video
+        function mostrarVideo(videoID) {
+            const misasContainer = document.getElementById("misas");
+            const santoContainer = document.getElementById("santo-container");
+            const santoLoading = document.getElementById("santo-loading");
+
+            const iframe = document.createElement("iframe");
+            iframe.width = "560";
+            iframe.height = "315";
+            iframe.src = `https://www.youtube.com/embed/${videoID}`;
+            iframe.title = "YouTube video player";
+            iframe.frameBorder = "0";
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+            iframe.allowFullscreen = true;
+
+            misasContainer.appendChild(iframe);
+
+            // Ocultar la imagen del santo y el texto "Cargando..." y mostrar la sección de videos
+            santoContainer.style.display = "none";
+            santoLoading.style.display = "none";
+            misasContainer.style.display = "block";
+        }
+
+        // Llama a la función para cargar la imagen del santo cuando la página se cargue
+        cargarImagenSanto();
+
+        // Después de 5 segundos, mostrar los videos
+        setTimeout(function() {
+            mostrarVideo(firstVideoID);
+            mostrarVideo(secondVideoID);
+            mostrarVideo(thirdVideoID);
+            mostrarVideo(cuatroVideoID);
+        }, 3000); // 5000 milisegundos = 5 segundos
+
+        // Función para cargar la imagen del santo
+        function cargarImagenSanto() {
+            const santoContainer = document.getElementById("santo-container");
+            santoContainer.style.display = "block";
+        }
+    </script>
+</body>
+</html>
