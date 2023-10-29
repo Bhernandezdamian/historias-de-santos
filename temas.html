@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temas para aprender más sobre la Iglesia Católica</title>
+    <style>
+        body {
+            font-family: "Arial", sans-serif;
+            text-align: center;
+            background: linear-gradient(to bottom, #f5f5f5, #1a17be);
+            margin: 0;
+        }
+
+        h1 {
+            background-color: #17c58b;
+            color: #fff;
+            padding: 20px;
+            margin: 0;
+        }
+
+        #video-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #video-list li {
+            cursor: pointer;
+            margin: 5px 0;
+            background-color: #eee;
+            padding: 5px;
+        }
+
+        iframe {
+            max-width: 100%;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Temas para aprender más sobre la Iglesia Católica</h1>
+    <div id="video-list">
+        <ul>
+            <li data-video-id="4HYpGS3KQEA">Video 1 - ¿Por qué soy Católico? - Padre Ángel Espinosa de los Monteros</li>
+            <li data-video-id="y7vZv3jumFE">Video 2 - La Santísima Trinidad</li>
+            <li data-video-id="4Yr1_PoN0qU">Video 3 - ¡Los 10 Mandamientos</li>
+            <li data-video-id="BWaZ3yhljNQ">Video 4 - ¿Qué son los sacramentos y cuántos hay?</li>
+            <li data-video-id="CfEKf8Mvd4s">Video 5 - Qué es la Eucaristía</li>
+            <li data-video-id="4QtgfZUBw4s">Video 6 - La virgen y Los santos Padre Luis Toro</li>
+            <li data-video-id="JhHAbNwDLYU">Video 7 - ¿Qué es la oración?</li>
+            <li data-video-id="CUO8DuebL2Q">Video 8 - ¿Qué es El Catecismo de la Iglesia Católica?</li>
+            <li data-video-id="dgXjT3tMZ_s">Video 9 - Las Sagradas Escrituras: ¿Qué es la Biblia? ¿Cómo se Originó?</li>
+            <li data-video-id="ZpQgFi9Swns">Video 10 - ¿Cuál es el contenido de la doctrina social de la Iglesia?</li>
+            <li data-video-id="22_1XV73Z7k">Video 11 - Contrición, Confesión, Penitencia</li>
+            <li data-video-id="Jriy1g5r6aY">Video 12 - Autoridad del Papa</li>
+            <li data-video-id="MvB3R90TBJk">Video 13 - ¿ Qué sucede con la muerte a nuestro cuerpo y nuestra alma?</li>
+            <li data-video-id="am_0MZpXETQ">Video 14 - Que enseña la Iglesia sobre la Moralidad Sexual</li>
+            <li data-video-id="C2khvgwQwf4">Video 15 - Autoridad del Papa</li>
+            <li data-video-id="6VbByTzSWtU">Video 16 - ¿Qué hace el Espíritu Santo en la Iglesia?</li>
+            <li data-video-id="tkKFurQlgJM">Video 17 - ¿Qué es la Tradición Apostólica?</li>
+            <li data-video-id="9rLHmGbWNW0">Video 18 - ¿Qué es la caridad?</li>
+            <li data-video-id="w9at1H9U2IA">Video 19 - ¿Qué es la vida consagrada?</li>
+            <li data-video-id="dy4rBtYq7Lw">Video 20 - El ecumenismo - Padre Luis Toro</li>
+            <li data-video-id="Hkur-x-ZUgQ">Video 21 - La VENERACIÓN de las RELIQUIAS en la Iglesia Católica.</li>
+            <li data-video-id="269prRY_fVI">Video 22 - ¿Qué significa "Inmaculada Concepción"?</li>
+            <li data-video-id="q8ORTUogUUU">Video 23 - Preguntas y Respuestas sobre la Cuaresma - Lo que querías saber sobre la Cuaresma</li>
+            <li data-video-id="xTvjFMgILVs">Video 24 - ¿Qué es el Año Litúrgico?</li>
+            <!-- Agrega más elementos li para más videos -->
+        </ul>
+    </div>
+
+    <script>
+        // Función para mostrar el video debajo del título
+        function mostrarVideo(event) {
+            const videoID = event.target.getAttribute("data-video-id");
+
+            // Crea un iframe para el video
+            const iframe = document.createElement("iframe");
+            iframe.width = "560";
+            iframe.height = "315";
+            iframe.src = `https://www.youtube.com/embed/${videoID}`;
+            iframe.title = "YouTube video player";
+            iframe.frameBorder = "0";
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+            iframe.allowFullscreen = true;
+
+            // Inserta el video debajo del título clicado
+            event.target.insertAdjacentElement("afterend", iframe);
+
+            // Elimina el evento click para que el usuario no pueda abrir el mismo video varias veces
+            event.target.removeEventListener("click", mostrarVideo);
+        }
+
+        // Agrega un evento click a cada elemento de la lista de videos
+        const videoItems = document.querySelectorAll("#video-list li");
+        videoItems.forEach(item => {
+            item.addEventListener("click", mostrarVideo);
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

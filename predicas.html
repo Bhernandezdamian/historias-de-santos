@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>predicas católicas</title>
+    <title>Predicadores Catolicos</title>
     <style>
         body {
             font-family: "Arial", sans-serif;
@@ -19,26 +20,20 @@
             margin: 0;
         }
 
-        #misas {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            display: none;
+        #video-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #video-list li {
+            cursor: pointer;
+            margin: 5px 0;
+            background-color: #eee;
+            padding: 5px;
         }
 
         iframe {
-            margin: 20px 0;
             max-width: 100%;
-        }
-
-        #santo-container {
-            display: block;
-            background-color: #fff;
-            padding: 20px;
-        }
-
-        #santo-loading {
-            display: none;
         }
 
         @media (max-width: 600px) {
@@ -49,29 +44,34 @@
     </style>
 </head>
 <body>
-    <h1>predicas católicas</h1>
-    <div id="misas">
-        <!-- Aquí se cargarán los videos de YouTube -->
-    </div>
-    <div id="santo-container">
-        <img src="https://sjb.marialuzdivina.com/wp-content/uploads/2019/06/ostens%C3%B3rio.gif" alt="Santo del día" width="300" height="300">
-
-        <p id="santo-loading">Cargando...</p>
+    <h1>Temas para aprender más sobre la Iglesia Católica</h1>
+    <div id="video-list">
+        <ul>
+            <li data-video-id="UI9VxZclEeA">Video 1 - ESTRÉS Y ANSIEDAD - Predica completa - Salvador Gomez</li>
+            <li data-video-id="Lsap0g7iGIY">Video 2 - El pecado, una herida en el corazón de Dios (Wilson Tamayo)</li>
+            <li data-video-id="5yBJRb27T1w">Video 3 - Señor te he negado, Señor me has perdonado (WILSON TAMAYO)</li>
+            <li data-video-id="TmM5UA9XBrw">Video 4 - Debes primero perdonar (Testimonio Jhónatan Córdoba)</li>
+            <li data-video-id="W9eFLeBkogA">Video 5 - COMO TENER UNA VERDADERA RELACIÓN CON DIOS - Salvador Gómez</li>
+            <li data-video-id="E6KAbOawels">Video 6 - El combate de la Fe | Fernando Casanova | ESNE</li>
+            <li data-video-id="VjcDUjg03UM">Video 7 - Los Que Dejaron De Seguir A Cristo (Predica Católica)</li>
+            <li data-video-id="GfP9dtYArvY">Video 8 - En Las Pruebas De Dios, El Es La Fuerza (Predica Católica)</li>
+            <li data-video-id="peLJdJqzw7k">Video 9 - EL DON DE LA FORTALEZA - SALVADOR GOMEZ</li>
+            <li data-video-id="q8BxE1bSNg0">Video 10 - TODOS TENEMOS PROBLEMAS-P. Mario Castañeda</li>
+            <li data-video-id="8u6njeXXMCo">Video 11 - Abre Sin Miedo La Puerta De La Fe</li>
+            <li data-video-id="QTbeShIB8bs">Video 12 - ESTAMOS EN LAS MANOS DE DIOS - Salvador Gómez</li>
+            <li data-video-id="CVuajiUpHB8">Video 13 - El sentido de la vida, Padre Ángel Espinosa</li>
+            <li data-video-id="peLJdJqzw7k">Video 14 - EL DON DE LA FORTALEZA - SALVADOR GOMEZ</li>
+            
+            <!-- Agrega más elementos li para más videos -->
+        </ul>
     </div>
 
     <script>
-        // Video de YouTube
-        const firstVideoID = "UI9VxZclEeA?si=h246xYF-ihatbTAB"; // Reemplaza con el ID de tu primer video
-        const secondVideoID = "Lsap0g7iGIY?si=BOg8eNitTNIvtwal"; // ID del segundo video
-        const thirdVideoID = "5yBJRb27T1w?si=yz7nr1x_kzmtmdN8"; // ID del tercer video
-        const cuatroVideoID = "TmM5UA9XBrw?si=cpS6KOx2WO9WEdwH";
+        // Función para mostrar el video debajo del título
+        function mostrarVideo(event) {
+            const videoID = event.target.getAttribute("data-video-id");
 
-        // Función para mostrar un video
-        function mostrarVideo(videoID) {
-            const misasContainer = document.getElementById("misas");
-            const santoContainer = document.getElementById("santo-container");
-            const santoLoading = document.getElementById("santo-loading");
-
+            // Crea un iframe para el video
             const iframe = document.createElement("iframe");
             iframe.width = "560";
             iframe.height = "315";
@@ -81,30 +81,82 @@
             iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
             iframe.allowFullscreen = true;
 
-            misasContainer.appendChild(iframe);
+            // Inserta el video debajo del título clicado
+            event.target.insertAdjacentElement("afterend", iframe);
 
-            // Ocultar la imagen del santo y el texto "Cargando..." y mostrar la sección de videos
-            santoContainer.style.display = "none";
-            santoLoading.style.display = "none";
-            misasContainer.style.display = "block";
+            // Elimina el evento click para que el usuario no pueda abrir el mismo video varias veces
+            event.target.removeEventListener("click", mostrarVideo);
         }
 
-        // Llama a la función para cargar la imagen del santo cuando la página se cargue
-        cargarImagenSanto();
-
-        // Después de 5 segundos, mostrar los videos
-        setTimeout(function() {
-            mostrarVideo(firstVideoID);
-            mostrarVideo(secondVideoID);
-            mostrarVideo(thirdVideoID);
-            mostrarVideo(cuatroVideoID);
-        }, 3000); // 5000 milisegundos = 5 segundos
-
-        // Función para cargar la imagen del santo
-        function cargarImagenSanto() {
-            const santoContainer = document.getElementById("santo-container");
-            santoContainer.style.display = "block";
-        }
+        // Agrega un evento click a cada elemento de la lista de videos
+        const videoItems = document.querySelectorAll("#video-list li");
+        videoItems.forEach(item => {
+            item.addEventListener("click", mostrarVideo);
+        });
     </script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -41,7 +41,7 @@ h1 {
 
 .button-container {
   position: fixed;
-  bottom: 20px; /* Adjust the distance from the bottom of the viewport */
+  bottom: 75px; /* Adjust the distance from the bottom of the viewport */
   left: 50%; /* Position horizontally centered */
   transform: translateX(-50%); /* Center the container horizontally */
   display: flex;
