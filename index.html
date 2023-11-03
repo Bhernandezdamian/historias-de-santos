@@ -161,6 +161,39 @@ nav a:hover {
 }
 
 
+
+
+/* Styles for share buttons */
+.share-button {
+    display: inline-block;
+    margin: 10px;
+    text-align: center;
+    text-decoration: none;
+    background-color: #007AFF; /* Blue color, you can adjust this */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.share-button:hover {
+    background-color: #0056b3; /* Slightly darker blue on hover */
+}
+
+/* WhatsApp share button specific style */
+.whatsapp {
+    background-color: #25d366; /* WhatsApp green color */
+}
+
+/* Facebook share button specific style */
+.facebook {
+    background-color: #1877f2; /* Facebook blue color */
+}
+
+
         
     </style>
 </head>
@@ -183,6 +216,7 @@ nav a:hover {
                 <li><a href="historiadesantos.html" onclick="changeColor(this)">pequeñas anecdotas de santos</a></li>
                 <li><a href="citasbiblicas.html" onclick="changeColor(this)">Mi encuentro diario con Dios</a></li>
                 <li><a href="https://ver.formed.lat/browse" onclick="changeColor(this)">Peliculas,Libros y Mas</a></li>
+                <li><a href="curso de biblia.html" onclick="changeColor(this)">Curso Bíblico Católico</a></li>
                 <li><a href="https://www.dominicos.org/predicacion/evangelio-del-dia/hoy/" onclick="changeColor(this)">Lectura Del Dia(misal noviembre)</a></li>
                 <li><a href="temas.html" onclick="changeColor(this)">Temas para aprender más sobre la Iglesia Católica</a></li>
                 <li><a href="nuevochat.html" onclick="changeColor(this)">chat catolico (pide un consejo,escribe tu testimonio, etc.)</a></li>
@@ -192,9 +226,14 @@ nav a:hover {
         </nav>
     </header>
     
-    
+    <a href="whatsapp://send?text=¡Echa un vistazo a esta increíble app Católica! %0A%0Ahttps://play.google.com/store/apps/details?id=com.tuempresa.vidasdesantos" class="share-button whatsapp" target="_blank">
+        Compartir esta Aplicación en tus grupos
+      </a>
+      
     <img src="eucaristia.gif" alt="Un GIF divertido" class="gif-responsive">
     <img src="jesusestavivo.jpg" alt="Una imagen inspiradora" class="img-responsive">
+    
+      
 
 
         <!-- Resto del contenido de la página -->
