@@ -163,7 +163,6 @@ nav a:hover {
 
 
 
-/* Styles for share buttons */
 .share-button {
     display: inline-block;
     margin: 10px;
@@ -177,20 +176,6 @@ nav a:hover {
     font-size: 16px;
     cursor: pointer;
     transition: background-color 0.3s;
-}
-
-.share-button:hover {
-    background-color: #0056b3; /* Slightly darker blue on hover */
-}
-
-/* WhatsApp share button specific style */
-.whatsapp {
-    background-color: #25d366; /* WhatsApp green color */
-}
-
-/* Facebook share button specific style */
-.facebook {
-    background-color: #1877f2; /* Facebook blue color */
 }
 
 
@@ -226,9 +211,7 @@ nav a:hover {
         </nav>
     </header>
     
-    <a href="https://wa.me/?text=Descarga%20nuestra%20aplicación%20de%20santos%20en%20Google%20Play:%20https%3A%2F%2Fplay.google.com%2Fstore%2Fapps%2Fdetails%3Fid%3Dcom.tuempresa.vidasdesantos%26pcampaignid%3Dweb_share" class="share-button whatsapp" target="_blank">
-        Compartir esta Aplicación en tus grupos de WhatsApp
-    </a>
+    <button class="share-button" id="copiarEnlace">Copiar enlace para compartir </button>
     
     
     
@@ -252,6 +235,26 @@ nav a:hover {
        
     </div>
     <script>
+
+        document.getElementById("copiarEnlace").addEventListener("click", function() {
+            const enlace = "https://play.google.com/store/apps/details?id=com.tuempresa.vidasdesantos&pcampaignid=web_share";
+            
+            const input = document.createElement("input");
+            input.value = enlace;
+            document.body.appendChild(input);
+
+            input.select();
+            document.execCommand("copy");
+
+            document.body.removeChild(input);
+
+            alert("El enlace se ha copiado al portapapeles. Puedes compartirlo pegándolo en tus grupos de WhatsApp.");
+        });
+
+
+
+
+
         // JavaScript para mostrar y ocultar el menú en dispositivos móviles
         const menuToggle = document.querySelector('.menu-toggle');
         const nav = document.querySelector('nav');
@@ -283,6 +286,9 @@ nav a:hover {
         });
 
 
+
+
+       
        
     </script>
 </body>
